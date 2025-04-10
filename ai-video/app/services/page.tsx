@@ -43,6 +43,10 @@ export default function ServicesPage() {
   const [activeExample, setActiveExample] = useState(0)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const [backgroundElements, setBackgroundElements] = useState<
+    { width: number; height: number; left: string; top: string }[]
+  >([])
+
   const videoRef = useRef<HTMLVideoElement>(null)
 
   const services = [
@@ -396,6 +400,17 @@ export default function ServicesPage() {
     return () => clearInterval(exampleInterval)
   }, [activeService])
 
+  // Generate background elements on the client side
+  useEffect(() => {
+    const elements = [...Array(20)].map(() => ({
+      width: Math.random() * 100 + 50,
+      height: Math.random() * 100 + 50,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+    }))
+    setBackgroundElements(elements)
+  }, [])
+
   const handleVideoPlay = () => {
     if (videoRef.current) {
       if (isVideoPlaying) {
@@ -522,16 +537,11 @@ export default function ServicesPage() {
 
           {/* Animated background elements */}
           <div className="absolute inset-0 z-0 overflow-hidden">
-            {[...Array(20)].map((_, i) => (
+            {backgroundElements.map((style, i) => (
               <motion.div
                 key={i}
                 className="absolute rounded-full bg-orange-500/10"
-                style={{
-                  width: Math.random() * 100 + 50,
-                  height: Math.random() * 100 + 50,
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                }}
+                style={style}
                 animate={{
                   y: [0, Math.random() * 100 - 50],
                   opacity: [0.1, 0.3, 0.1],
